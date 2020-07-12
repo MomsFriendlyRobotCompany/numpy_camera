@@ -5,7 +5,7 @@ try:
 except ImportError:
     print("Need to install picamera by:")
     print("  pip install picamera[array]")
-    raise Exception("Need picamera installed")
+    raise
 
 # import imageio
 from colorama import Fore
@@ -14,12 +14,15 @@ from threading import Thread, Lock
 import time
 from slurm.rate import Rate
 import numpy as np
-
-rgb2g = np.array([0.2989, 0.5870, 0.1140])
-bgr2g = np.array([0.1140, 0.5870, 0.2989])
-
-rgb2gray = lambda im: np.dot(im, rgb2g).astype(np.uint8)
-bgr2gray = lambda im: np.dot(im, bgr2g).astype(np.uint8)
+from .utils import bgr2gray, rgb2gray
+#
+# rgb2g = np.array([0.2989, 0.5870, 0.1140])
+# bgr2g = np.array([0.1140, 0.5870, 0.2989])
+#
+# rgb2gray = lambda im: np.dot(im, rgb2g).astype(np.uint8)
+# bgr2gray = lambda im: np.dot(im, bgr2g).astype(np.uint8)
+#
+# def gray2rgb(g): a=g.copy().T; return np.array([a,a,a],dtype=np.uint8).T
 
 class ThreadedCamera:
     """
@@ -33,10 +36,10 @@ class ThreadedCamera:
         driver: V4L2 driver
 
     c = ThreadedCamera((640,480))
-    c.start()       # starts internal loop
-    frame = c.get() # numpy array
-    c.stop()        # stops internal loop
-    c.join()        # gathers back up the thread
+    c.start()        # starts internal loop
+    frame = c.read() # numpy array
+    c.stop()         # stops internal loop
+    c.join()         # gathers back up the thread
     """
     def __init__(self, resolution=None, fps=30, fmt='rgb'):
         if resolution is None:
@@ -44,17 +47,20 @@ class ThreadedCamera:
         else:
             res = resolution
 
-        self.fmt = fmt
-        if fmt == "rgb":
-            self.c2g = np.array([0.2989, 0.5870, 0.1140])
-        elif fmt == "bgr":
-            self.c2g = np.array([0.1140, 0.5870, 0.2989])
-        elif fmt == "gray":
-            fmt = "rgb"
-            self.fmt = "gray"
-            self.c2g = np.array([0.2989, 0.5870, 0.1140])
-        else:
+        if fmt not in ["gray", "rgb", "bgr"]:
             raise Exception(f"Unknown color format: {fmt}")
+
+        self.fmt = fmt
+        # if fmt == "rgb":
+        #     self.c2g = np.array([0.2989, 0.5870, 0.1140])
+        # elif fmt == "bgr":
+        #     self.c2g = np.array([0.1140, 0.5870, 0.2989])
+        # elif fmt == "gray":
+        #     fmt = "rgb"
+        #     self.fmt = "gray"
+        #     self.c2g = np.array([0.2989, 0.5870, 0.1140])
+        # else:
+        #     raise Exception(f"Unknown color format: {fmt}")
 
         self.camera = PiCamera()
         self.camera.framerate = fps
@@ -97,8 +103,8 @@ class ThreadedCamera:
     # def rgb2gray(self, im):
     #     return np.dot(im, rgb2gray).astype(np.uint8)
 
-    def color2gray(self, im):
-        return np.dot(im, self.c2g).astype(np.uint8)
+    # def color2gray(self, im):
+    #     return np.dot(im, self.c2g).astype(np.uint8)
 
     def read(self):
         """Returns image frame"""
@@ -106,7 +112,8 @@ class ThreadedCamera:
             return None
 
         if self.fmt == "gray":
-            return np.dot(self.frame, self.c2g).astype(np.uint8)
+            # return np.dot(self.frame, self.c2g).astype(np.uint8)
+            return bgr2gray(self.frame)
         else:
             return frame
 
