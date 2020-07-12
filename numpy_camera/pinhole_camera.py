@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*
+##############################################
+# The MIT License (MIT)
+# Copyright (c) 2020 Kevin Walchko
+# see LICENSE for full details
+##############################################
 import attr
 from collections import namedtuple
 import numpy as np
@@ -47,7 +53,7 @@ class PinholeCamera:
         if "pi" in params:
             if params["pi"] != "v2.1":
                 raise Exception("Wrong PiCamera model:", params["pi"])
-                
+
             w,h = self.shape
             fx = 3.11*w/(3936e-3)
             fy = 3.11*h/(2460e-3)
