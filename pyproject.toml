@@ -34,7 +34,7 @@ colorama = "*"
 slurm = "*"
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.2"
+pytest = "*"
 # mypy = "*"
 
 [tool.poetry.extras]
