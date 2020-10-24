@@ -35,13 +35,9 @@ slurm = "*"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
-# mypy = "*"
 
 [tool.poetry.extras]
 picamera = ["picamera"]
-
-# [mypy-pi_servo_serial]
-# ignore_missing_imports = True
 
 [build-system]
 requires = ["poetry>=0.12"]
