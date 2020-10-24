@@ -6,6 +6,13 @@ Simple threaded camera that doesn't need OpenCV. It is setup to use
 `picamera` interface on the Raspberry Pi to grab images. If you are not using
 a Raspberry Pi with the PiCamera, then you can't use this library.
 
+## Why?
+
+Getting OpenCV on a Raspberry Pi historically is hard, but now
+there is a `pip` library, so it is easier. However, if there 
+is some reason why you can't, don't, won't use that, this can
+be used.
+
 ## Install
 
 ```
