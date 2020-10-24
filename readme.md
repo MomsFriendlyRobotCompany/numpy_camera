@@ -1,5 +1,8 @@
 # Numpy Camera
 
+![Python](https://github.com/MomsFriendlyRobotCompany/numpy_camera/workflows/Python/badge.svg)
+![GitHub](https://img.shields.io/github/license/MomsFriendlyRobotCompany/numpy_camera)
+
 **Look away! Still in dev**
 
 Simple threaded camera that doesn't need OpenCV. It is setup to use
