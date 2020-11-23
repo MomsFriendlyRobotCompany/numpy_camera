@@ -11,10 +11,12 @@ import numpy as np
 FrameSize = namedtuple("FrameSize", "w h")
 
 class PinholeCamera:
+    name = None
+    
     def set(self, w, h, f, c, R, t):
         """
         (w,h): width, height in pixels
-        f: (fx,fy) focal length in pixels
+        f: (fx,fy) focal length in pixels, focal_length/
         c: (cx,cy) principle point in pixels (image center)
         R: rotation from world to camera
         t: translation from world to camera in meters
@@ -140,3 +142,25 @@ class PinholeCamera:
 
     def back_project(self, points):
         return None
+
+class StereoCamera:
+    def __init__(self, cam0, cam1, R, baseline, matcher):
+        self.cam0 = cam0
+        self.cam1 = cam1
+        self.R = R
+        self.baseline = baseline
+        self.matcher = matcher
+        
+    def F(self):
+        pass
+    
+    def E(self):
+        pass
+    
+    def disparity(self, img0, img1):
+        return self.matcher(img0, img1)
+    
+    def fov(self):
+        return 2*atan(c.npix/2./cam0.f)
+    
+    
