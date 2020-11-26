@@ -11,6 +11,7 @@ np.set_printoptions(precision=1)
 np.set_printoptions(suppress=True)
 from slurm import storage
 from colorama import Fore
+from math import atan, pi
 
 FrameSize = namedtuple("FrameSize", "w h")
 
@@ -19,6 +20,7 @@ class PinholeCamera:
     K = None
     P = None
     ready = False
+    distortion = None
 
     def __init__(self, file=None):
         if file and isinstance(file, str):
@@ -43,25 +45,25 @@ class PinholeCamera:
         s += f"  Projection Matrix(P):\n    {m}\n"
         return s
 
-    def set(self, w, h, f, c, R, t):
-        """
-        (w,h): width, height in pixels
-        f: (fx,fy) focal length in pixels, focal_length [pixels]
-        c: (cx,cy) principle point in pixels (image center)[pixels]
-        R: rotation from world to camera
-        t: translation from world to camera frame [meters]
-        distortion: distortion parameters from calibration
-        """
-        self.shape = FrameSize(w,h)
-        Rt = np.hstack((R,t))
-        fx, fy = f
-        cx, cy = c
-        self.K = np.array([
-            [fx,  0, cx],
-            [ 0, fy, cy],
-            [ 0,  0,  1]
-        ])
-        self.P = K @ Rt
+    # def set(self, w, h, f, c, R, t):
+    #     """
+    #     (w,h): width, height in pixels
+    #     f: (fx,fy) focal length in pixels, focal_length [pixels]
+    #     c: (cx,cy) principle point in pixels (image center)[pixels]
+    #     R: rotation from world to camera
+    #     t: translation from world to camera frame [meters]
+    #     distortion: distortion parameters from calibration
+    #     """
+    #     self.shape = FrameSize(w,h)
+    #     Rt = np.hstack((R,t))
+    #     fx, fy = f
+    #     cx, cy = c
+    #     self.K = np.array([
+    #         [fx,  0, cx],
+    #         [ 0, fy, cy],
+    #         [ 0,  0,  1]
+    #     ])
+    #     self.P = K @ Rt
 
     def set_params(self, params):
         if "name" in params:
@@ -71,7 +73,7 @@ class PinholeCamera:
             fx, fy = params["f"]
             cx, cy = params["f"]
 
-            K = np.array([
+            self.K = np.array([
                 [fx,  0, cx],
                 [ 0, fy, cy],
                 [ 0,  0,  1]
@@ -112,6 +114,9 @@ class PinholeCamera:
                 [ 0, fy, cy],
                 [ 0,  0,  1]
             ])
+
+        if "distortion" in params:
+            self.distortion = np.array(params["distortion"])
 
         if "channels" in params:
             self.channels = int(params["channels"])
@@ -170,29 +175,41 @@ class PinholeCamera:
         """
         raise NotImplemented()
 
-class StereoCamera:
-    def __init__(self, cam0, cam1, R, baseline, matcher):
-        """
-        cam0: left camera
-        cam1: right camera
-        R: rotation from left to right camera
-        baseline: translation from left to right camera [meters]
-        matcher: some matcher that calculates disparity between images
-        """
-        self.cam0 = cam0
-        self.cam1 = cam1
-        self.R = R
-        self.baseline = baseline
-        self.matcher = matcher
-
-    def F(self):
-        pass
-
-    def E(self):
-        pass
-
-    def disparity(self, img0, img1):
-        return self.matcher(img0, img1)
-
     def fov(self):
-        return 2*atan(c.npix/2./cam0.f)
+        """
+        Returns the FOV as (horizontal, vertical) in degrees
+        """
+        w,h = self.size
+        fx = self.K[0,0]
+        fy = self.K[1,1]
+        fovx = 2*atan(w/2/fx) * 180/pi
+        fovy = 2*atan(h/2/fy) * 180/pi
+        return (fovx, fovy)
+
+
+# class StereoCamera:
+#     def __init__(self, cam0, cam1, R, baseline, matcher):
+#         """
+#         cam0: left camera
+#         cam1: right camera
+#         R: rotation from left to right camera
+#         baseline: translation from left to right camera [meters]
+#         matcher: some matcher that calculates disparity between images
+#         """
+#         self.cam0 = cam0
+#         self.cam1 = cam1
+#         self.R = R
+#         self.baseline = baseline
+#         self.matcher = matcher
+#
+#     def F(self):
+#         pass
+#
+#     def E(self):
+#         pass
+#
+#     def disparity(self, img0, img1):
+#         return self.matcher(img0, img1)
+#     #
+#     # def fov(self):
+#     #     return 2*atan(c.npix/2./cam0.f)
