@@ -2,6 +2,10 @@
 
 ![Python](https://github.com/MomsFriendlyRobotCompany/numpy_camera/workflows/Python/badge.svg)
 ![GitHub](https://img.shields.io/github/license/MomsFriendlyRobotCompany/numpy_camera)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/numpy_camera)
+![PyPI](https://img.shields.io/pypi/v/numpy_camera)
+![PyPI - Wheel](https://img.shields.io/pypi/wheel/numpy_camera)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/numpy_camera)
 
 **Look away! Still in dev**
 
