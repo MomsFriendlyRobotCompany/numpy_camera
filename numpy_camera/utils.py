@@ -6,6 +6,8 @@
 ##############################################
 import numpy as np
 
+# all of these numpy conversions are slow ... use OpenCV or other for faster
+# performance
 
 rgbw = np.array([0.2989, 0.5870, 0.1140])
 bgrw = np.array([0.1140, 0.5870, 0.2989])

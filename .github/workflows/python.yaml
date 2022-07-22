@@ -7,13 +7,13 @@ jobs:
         strategy:
           max-parallel: 5
           matrix:
-            python-version: [3.6, 3.7, 3.8]
+            python-version: ["3.8","3.9","3.10"]
         steps:
             - uses: actions/checkout@master
             - name: Setup Python ${{ matrix.python-version }}
               uses: actions/setup-python@v1
               with:
-                python-version: ${{ matrix.python-version }} 
+                python-version: ${{ matrix.python-version }}
                 # architecture: 'x64' # (x64 or x86)
             # - name: Set up Python ${{ matrix.python-version }}
             #   uses: actions/setup-python@v1
